@@ -5,11 +5,17 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using DynamicRoleBasedAuthorization.OriginalWeb.Models;
+using DynamicRoleBasedAuthorization.OriginalWeb.Services;
 
 namespace DynamicRoleBasedAuthorization.OriginalWeb.Controllers
 {
     public class HomeController : Controller
     {
+        public HomeController(IMvcControllerDiscovery mvcControllerDiscovery)
+        {
+
+        }
+
         public IActionResult Index()
         {
             return View();

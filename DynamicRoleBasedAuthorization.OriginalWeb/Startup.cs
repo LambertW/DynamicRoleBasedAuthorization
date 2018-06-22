@@ -12,6 +12,7 @@ using Microsoft.EntityFrameworkCore;
 using DynamicRoleBasedAuthorization.OriginalWeb.Data;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using DynamicRoleBasedAuthorization.OriginalWeb.Services;
 
 namespace DynamicRoleBasedAuthorization.OriginalWeb
 {
@@ -41,6 +42,8 @@ namespace DynamicRoleBasedAuthorization.OriginalWeb
                 .AddEntityFrameworkStores<ApplicationDbContext>();
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+
+            services.AddSingleton<IMvcControllerDiscovery, MvcControllerDiscovery>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
