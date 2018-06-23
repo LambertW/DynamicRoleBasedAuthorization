@@ -13,6 +13,7 @@ using DynamicRoleBasedAuthorization.OriginalWeb.Data;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using DynamicRoleBasedAuthorization.OriginalWeb.Services;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace DynamicRoleBasedAuthorization.OriginalWeb
 {
@@ -39,6 +40,7 @@ namespace DynamicRoleBasedAuthorization.OriginalWeb
                 options.UseSqlServer(
                     Configuration.GetConnectionString("DefaultConnection")));
             services.AddDefaultIdentity<IdentityUser>()
+                .AddRoles<IdentityRole>()   // 不添加无法注入RoleManager<IdentityRole>
                 .AddEntityFrameworkStores<ApplicationDbContext>();
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);

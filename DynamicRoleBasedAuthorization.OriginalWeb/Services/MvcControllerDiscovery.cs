@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
+using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace DynamicRoleBasedAuthorization.OriginalWeb.Services
 {
@@ -75,7 +76,7 @@ namespace DynamicRoleBasedAuthorization.OriginalWeb.Services
             return _mvcControllers;
         }
 
-        private static bool IsProtectedAction(TypeInfo controllerTypeInfo, MethodInfo actionMethodInfo)
+        private bool IsProtectedAction(TypeInfo controllerTypeInfo, MethodInfo actionMethodInfo)
         {
             if (actionMethodInfo.GetCustomAttribute<AllowAnonymousAttribute>(true) != null)
                 return false;
