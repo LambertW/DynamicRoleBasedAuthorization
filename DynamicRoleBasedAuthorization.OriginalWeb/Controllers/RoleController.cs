@@ -173,5 +173,27 @@ namespace DynamicRoleBasedAuthorization.OriginalWeb.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        [DisplayName("删除")]
+        [HttpDelete("role/{id}")]
+        public async Task<IActionResult> Delete(string id)
+        {
+            var role = await _roleManager.FindByIdAsync(id);
+            if(role == null)
+            {
+                ModelState.AddModelError("Error", "角色不存在");
+                return BadRequest(ModelState);
+            }
+
+            var result = await _roleManager.DeleteAsync(role);
+            if (result.Succeeded)
+                return Ok(new { });
+
+            foreach (var error in result.Errors)
+            {
+                ModelState.AddModelError("Error", error.Description);
+            }
+
+            return BadRequest(ModelState);
+        }
     }
 }
