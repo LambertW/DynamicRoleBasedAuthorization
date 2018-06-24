@@ -14,6 +14,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using DynamicRoleBasedAuthorization.OriginalWeb.Services;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.Logging;
 
 namespace DynamicRoleBasedAuthorization.OriginalWeb
 {
@@ -46,10 +47,15 @@ namespace DynamicRoleBasedAuthorization.OriginalWeb
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
             services.AddSingleton<IMvcControllerDiscovery, MvcControllerDiscovery>();
+            services.AddTransient<SeedData, SeedData>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env,
+            ApplicationDbContext dbContext,
+            UserManager<IdentityUser> userManager,
+            RoleManager<IdentityRole> roleManager,
+            ILogger<Startup> logger)
         {
             if (env.IsDevelopment())
             {

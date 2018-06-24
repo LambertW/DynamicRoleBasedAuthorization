@@ -1,0 +1,52 @@
+﻿@model DynamicRoleBasedAuthorization.OriginalWeb.Models.UserRoleViewModel
+
+@{
+    ViewData["Title"] = "Edit";
+
+    var roles = (IEnumerable<Microsoft.AspNetCore.Identity.IdentityRole>)ViewData["Roles"];
+}
+
+<h2>编辑用户角色</h2>
+
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Edit">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input asp-for="UserId" type="hidden" />
+
+            <div class="form-group">
+                <label asp-for="UserName" class="control-label"></label>
+                <div class="">
+                    @Html.DisplayFor(m => m.UserName)
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="control-label">角色</label>
+                <div>
+                    @foreach (var role in roles)
+                    {
+                        <label>
+                            <input type="checkbox" name="Roles[]" value="@role.Name"
+                                   @if (Model?.Roles != null && Model.Roles.Contains(role.Name))
+                                   {
+                                       <text> checked="checked" </text>
+                                   } />
+                            &nbsp; @role.Name &nbsp;&nbsp;
+                        </label>
+                    }
+                </div>
+            </div>
+
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-default" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">返回列表</a>
+</div>
+

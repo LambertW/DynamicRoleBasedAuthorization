@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using DynamicRoleBasedAuthorization.OriginalWeb.Models;
 using DynamicRoleBasedAuthorization.OriginalWeb.Services;
+using DynamicRoleBasedAuthorization.OriginalWeb.Data;
 
 namespace DynamicRoleBasedAuthorization.OriginalWeb.Controllers
 {
@@ -13,7 +14,7 @@ namespace DynamicRoleBasedAuthorization.OriginalWeb.Controllers
     {
         public HomeController(IMvcControllerDiscovery mvcControllerDiscovery)
         {
-
+            
         }
 
         public IActionResult Index()
@@ -28,8 +29,11 @@ namespace DynamicRoleBasedAuthorization.OriginalWeb.Controllers
             return View();
         }
 
-        public IActionResult Contact()
+        public async Task<IActionResult> Contact()
         {
+            var seedData = (SeedData)HttpContext.RequestServices.GetService(typeof(SeedData));
+            await seedData.Initialize();
+
             ViewData["Message"] = "Your contact page.";
 
             return View();
