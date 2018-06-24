@@ -1,5 +1,7 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using DynamicRoleBasedAuthorization.OriginalWeb.Services;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,19 +11,22 @@ namespace DynamicRoleBasedAuthorization.OriginalWeb.Data
 {
     public class SeedData
     {
-        private ApplicationDbContext _dbContext;
-        private UserManager<IdentityUser> _userManager;
-        private RoleManager<IdentityRole> _roleManager;
-        private ILogger<SeedData> _logger;
+        private readonly ApplicationDbContext _dbContext;
+        private readonly UserManager<IdentityUser> _userManager;
+        private readonly RoleManager<IdentityRole> _roleManager;
+        private readonly ILogger<SeedData> _logger;
+        private readonly IMvcControllerDiscovery _mvcControllerDiscovery;
 
         public SeedData(ApplicationDbContext dbContext,
             UserManager<IdentityUser> userManager,
             RoleManager<IdentityRole> roleManager,
+            IMvcControllerDiscovery mvcControllerDiscovery,
             ILogger<SeedData> logger)
         {
             _dbContext = dbContext;
             _userManager = userManager;
             _roleManager = roleManager;
+            _mvcControllerDiscovery = mvcControllerDiscovery;
             _logger = logger;
         }
 
@@ -32,59 +37,58 @@ namespace DynamicRoleBasedAuthorization.OriginalWeb.Data
             if (_dbContext.Users.Any())
                 return;
 
-            await CreateDefaultUserAndRoleForApplication(_userManager, _roleManager, _logger);
+            await CreateDefaultUserAndRoleForApplication();
         }
 
-        private async Task CreateDefaultUserAndRoleForApplication(
-            UserManager<IdentityUser> userManager,
-            RoleManager<IdentityRole> roleManager,
-            ILogger<SeedData> logger)
+        private async Task CreateDefaultUserAndRoleForApplication()
         {
             const string administratorRole = "Administrator";
             const string userName = "admin@demo.com";
             const string defaultPassword = "123qwe!@#QWE";
 
-            await CreateDefaultAdministatorRole(roleManager, logger, administratorRole);
-            var user = await CreateDefaultUser(userManager, logger, userName, defaultPassword);
+            await CreateDefaultAdministatorRole(administratorRole);
+            var user = await CreateDefaultUser(userName, defaultPassword);
 
-            await AddDefaultRoleToDefaultUser(userManager, logger, user, userName, administratorRole);
+            await AddDefaultRoleToDefaultUser(user, userName, administratorRole);
         }
 
         private async Task CreateDefaultAdministatorRole(
-            RoleManager<IdentityRole> roleManager, 
-            ILogger<SeedData> logger,
             string administratorRole)
         {
-            logger.LogInformation($"Create the role `{administratorRole}` for application");
-            var ir = await roleManager.CreateAsync(new IdentityRole(administratorRole));
+            _logger.LogInformation($"Create the role `{administratorRole}` for application");
+            var role = new IdentityRole(administratorRole);
+            var ir = await _roleManager.CreateAsync(role);
             if(ir.Succeeded)
             {
-                logger.LogDebug($"Created the role `{administratorRole}` successfully");
+                _logger.LogDebug($"Created the role `{administratorRole}` successfully");
             }
             else
             {
                 var exception = new ApplicationException($"Default role `{administratorRole}` cannot be created");
-                logger.LogError(exception, GetIdentityErrorsInCommaSeperatedList(ir));
+                _logger.LogError(exception, GetIdentityErrorsInCommaSeperatedList(ir));
                 throw exception;
             }
+
+            _logger.LogInformation($"Create the role claims for `{administratorRole}` ");
+            var controllers = _mvcControllerDiscovery.GetControllers();
+            await _roleManager.AddClaimAsync(role, new System.Security.Claims.Claim("Access", JsonConvert.SerializeObject(controllers)));
         }
 
         private async Task<IdentityUser> CreateDefaultUser(
-            UserManager<IdentityUser> userManager, ILogger<SeedData> logger,
             string userName, string defaultPassword)
         {
-            logger.LogInformation($"Create default user with userName `{userName}` for application");
+            _logger.LogInformation($"Create default user with userName `{userName}` for application");
             var user = new IdentityUser(userName);
 
-            var result = await userManager.CreateAsync(user, defaultPassword);
+            var result = await _userManager.CreateAsync(user, defaultPassword);
             if(result.Succeeded)
             {
-                logger.LogDebug($"Created default user `{userName}` successfully");
+                _logger.LogDebug($"Created default user `{userName}` successfully");
             }
             else
             {
                 var exception = new ApplicationException($"Default user `{userName}` cannot be created");
-                logger.LogError(exception, GetIdentityErrorsInCommaSeperatedList(result));
+                _logger.LogError(exception, GetIdentityErrorsInCommaSeperatedList(result));
                 throw exception;
             }
 
@@ -92,21 +96,20 @@ namespace DynamicRoleBasedAuthorization.OriginalWeb.Data
         }
 
         private async Task AddDefaultRoleToDefaultUser(
-            UserManager<IdentityUser> userManager, ILogger<SeedData> logger,
             IdentityUser defaultUser, 
             string userName, string administratorRole)
         {
-            logger.LogInformation($"Add default user `{userName}` to role `{administratorRole}`");
-            var result = await userManager.AddToRoleAsync(defaultUser, administratorRole);
+            _logger.LogInformation($"Add default user `{userName}` to role `{administratorRole}`");
+            var result = await _userManager.AddToRoleAsync(defaultUser, administratorRole);
 
             if (result.Succeeded)
             {
-                logger.LogDebug($"Added the role `{administratorRole}` to default user `{userName}` successfully");
+                _logger.LogDebug($"Added the role `{administratorRole}` to default user `{userName}` successfully");
             }
             else
             {
                 var exception = new ApplicationException($"The role `{administratorRole}` cannot be set for the user `{userName}`");
-                logger.LogError(exception, GetIdentityErrorsInCommaSeperatedList(result));
+                _logger.LogError(exception, GetIdentityErrorsInCommaSeperatedList(result));
                 throw exception;
             }
         }
