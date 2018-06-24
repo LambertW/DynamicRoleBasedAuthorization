@@ -15,6 +15,7 @@ using Microsoft.Extensions.DependencyInjection;
 using DynamicRoleBasedAuthorization.OriginalWeb.Services;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Logging;
+using DynamicRoleBasedAuthorization.OriginalWeb.Filters;
 
 namespace DynamicRoleBasedAuthorization.OriginalWeb
 {
@@ -44,7 +45,10 @@ namespace DynamicRoleBasedAuthorization.OriginalWeb
                 .AddRoles<IdentityRole>()   // 不添加无法注入RoleManager<IdentityRole>
                 .AddEntityFrameworkStores<ApplicationDbContext>();
 
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+            services.AddMvc(options =>
+            {
+                options.Filters.Add(typeof(DynamicAuthorizationFilter));
+            }).SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
             services.AddSingleton<IMvcControllerDiscovery, MvcControllerDiscovery>();
             services.AddTransient<SeedData, SeedData>();

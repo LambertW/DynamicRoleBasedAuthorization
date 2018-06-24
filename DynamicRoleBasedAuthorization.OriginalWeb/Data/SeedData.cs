@@ -41,7 +41,7 @@ namespace DynamicRoleBasedAuthorization.OriginalWeb.Data
             ILogger<SeedData> logger)
         {
             const string administratorRole = "Administrator";
-            const string userName = "Admin";
+            const string userName = "admin@demo.com";
             const string defaultPassword = "123qwe!@#QWE";
 
             await CreateDefaultAdministatorRole(roleManager, logger, administratorRole);

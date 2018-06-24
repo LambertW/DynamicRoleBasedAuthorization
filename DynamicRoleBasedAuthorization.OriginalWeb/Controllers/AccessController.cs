@@ -5,12 +5,14 @@ using System.Linq;
 using System.Threading.Tasks;
 using DynamicRoleBasedAuthorization.OriginalWeb.Data;
 using DynamicRoleBasedAuthorization.OriginalWeb.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace DynamicRoleBasedAuthorization.OriginalWeb.Controllers
 {
+    [Authorize]
     [DisplayName("Access Management")]
     public class AccessController : Controller
     {

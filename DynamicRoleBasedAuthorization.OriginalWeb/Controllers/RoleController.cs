@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using DynamicRoleBasedAuthorization.OriginalWeb.Models;
 using DynamicRoleBasedAuthorization.OriginalWeb.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -12,6 +13,7 @@ using Newtonsoft.Json;
 
 namespace DynamicRoleBasedAuthorization.OriginalWeb.Controllers
 {
+    [Authorize]
     public class RoleController : Controller
     {
         private readonly IMvcControllerDiscovery _mvcControllerDiscovery;
