@@ -1,4 +1,5 @@
 ﻿using DynamicRoleBasedAuthorization.OriginalWeb.Models;
+using DynamicRoleBasedAuthorization.OriginalWeb.Models.DynamicAuthorization;
 using System;
 using System.Collections.Generic;
 using System.Linq;

@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using DynamicRoleBasedAuthorization.OriginalWeb.Data;
 using DynamicRoleBasedAuthorization.OriginalWeb.Models;
+using DynamicRoleBasedAuthorization.OriginalWeb.Models.DynamicAuthorization;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -13,7 +14,7 @@ using Microsoft.EntityFrameworkCore;
 namespace DynamicRoleBasedAuthorization.OriginalWeb.Controllers
 {
     [Authorize]
-    [DisplayName("Access Management")]
+    [DisplayName("授权管理")]
     public class AccessController : Controller
     {
         private readonly ApplicationDbContext _dbContext;
@@ -30,7 +31,7 @@ namespace DynamicRoleBasedAuthorization.OriginalWeb.Controllers
             _userManager = userManager;
         }
 
-        [DisplayName("User List")]
+        [DisplayName("列表")]
         public async Task<IActionResult> Index()
         {
             var query = await (
@@ -58,6 +59,7 @@ namespace DynamicRoleBasedAuthorization.OriginalWeb.Controllers
             return View(userList);
         }
 
+        [DisplayName("编辑")]
         public async Task<IActionResult> Edit(string id)
         {
             var user = await _userManager.FindByIdAsync(id);

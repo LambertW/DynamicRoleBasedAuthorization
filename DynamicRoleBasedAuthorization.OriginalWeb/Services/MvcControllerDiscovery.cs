@@ -5,6 +5,7 @@ using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using DynamicRoleBasedAuthorization.OriginalWeb.Models;
+using DynamicRoleBasedAuthorization.OriginalWeb.Models.DynamicAuthorization;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Controllers;

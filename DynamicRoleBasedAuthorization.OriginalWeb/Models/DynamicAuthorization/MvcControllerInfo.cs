@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace DynamicRoleBasedAuthorization.OriginalWeb.Models
+namespace DynamicRoleBasedAuthorization.OriginalWeb.Models.DynamicAuthorization
 {
     public class MvcControllerInfo
     {

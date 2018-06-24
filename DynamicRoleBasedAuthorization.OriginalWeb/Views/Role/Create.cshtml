@@ -1,8 +1,9 @@
-﻿@model DynamicRoleBasedAuthorization.OriginalWeb.Models.RoleViewModel
+﻿@model DynamicRoleBasedAuthorization.OriginalWeb.Models.DynamicAuthorization.RoleViewModel
 
 @{
     ViewData["Title"] = "Create";
-    var controllers = (IEnumerable<MvcControllerInfo>)ViewData["Controllers"];
+    var controllers = (IEnumerable<DynamicRoleBasedAuthorization.OriginalWeb.Models.DynamicAuthorization.MvcControllerInfo>)
+        ViewData["Controllers"];
 }
 
 @section Header {
@@ -11,7 +12,6 @@
 
 <h2>创建角色</h2>
 
-<h4>RoleViewModel</h4>
 <hr />
 <div class="row">
     <div class="col-md-4">
@@ -54,7 +54,7 @@
         </form>
     </div>
 </div><div>
-    <a asp-action="Index">Back to List</a>
+          <a asp-action="Index" class="btn btn-primary btn-sm">返回列表</a>
 </div>
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}

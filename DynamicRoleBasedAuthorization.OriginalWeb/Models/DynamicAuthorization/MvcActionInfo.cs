@@ -1,4 +1,4 @@
-﻿namespace DynamicRoleBasedAuthorization.OriginalWeb.Models
+﻿namespace DynamicRoleBasedAuthorization.OriginalWeb.Models.DynamicAuthorization
 {
     public class MvcActionInfo
     {

@@ -1,5 +1,6 @@
 ﻿using DynamicRoleBasedAuthorization.OriginalWeb.Data;
 using DynamicRoleBasedAuthorization.OriginalWeb.Models;
+using DynamicRoleBasedAuthorization.OriginalWeb.Models.DynamicAuthorization;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;

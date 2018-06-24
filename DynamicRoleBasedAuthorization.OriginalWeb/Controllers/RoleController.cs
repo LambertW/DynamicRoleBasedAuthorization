@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
 using DynamicRoleBasedAuthorization.OriginalWeb.Models;
+using DynamicRoleBasedAuthorization.OriginalWeb.Models.DynamicAuthorization;
 using DynamicRoleBasedAuthorization.OriginalWeb.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -13,6 +14,7 @@ using Newtonsoft.Json;
 
 namespace DynamicRoleBasedAuthorization.OriginalWeb.Controllers
 {
+    [DisplayName("角色权限管理")]
     [Authorize]
     public class RoleController : Controller
     {
@@ -27,14 +29,15 @@ namespace DynamicRoleBasedAuthorization.OriginalWeb.Controllers
             _roleManager = roleManager;
         }
 
-        [DisplayName("List")]
-        public async Task<ActionResult> Index()
+        [DisplayName("列表")]
+        public async Task<IActionResult> Index()
         {
             var roles = await _roleManager.Roles.ToListAsync();
 
             return View(roles);
         }
 
+        [DisplayName("创建")]
         public ActionResult Create()
         {
             ViewData["Controllers"] = _mvcControllerDiscovery.GetControllers();
@@ -43,7 +46,7 @@ namespace DynamicRoleBasedAuthorization.OriginalWeb.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult> Create(RoleViewModel viewModel)
+        public async Task<IActionResult> Create(RoleViewModel viewModel)
         {
             if(!ModelState.IsValid)
             {
@@ -94,6 +97,7 @@ namespace DynamicRoleBasedAuthorization.OriginalWeb.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        [DisplayName("编辑")]
         public async Task<IActionResult> Edit(string id)
         {
             ViewData["Controllers"] = _mvcControllerDiscovery.GetControllers();
@@ -116,7 +120,7 @@ namespace DynamicRoleBasedAuthorization.OriginalWeb.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult> Edit(string id, RoleViewModel viewModel)
+        public async Task<IActionResult> Edit(string id, RoleViewModel viewModel)
         {
             ViewData["Controllers"] = _mvcControllerDiscovery.GetControllers();
             if (!ModelState.IsValid)
