@@ -1,7 +1,7 @@
 ﻿@model DynamicRoleBasedAuthorization.OriginalWeb.Models.RoleViewModel
 
 @{
-    ViewData["Title"] = "Create";
+    ViewData["Title"] = "Edit";
     var controllers = (IEnumerable<MvcControllerInfo>)ViewData["Controllers"];
 }
 
@@ -9,13 +9,13 @@
     <link href="~/lib/jquery-bonsai/jquery.bonsai.css" rel="stylesheet" />
 }
 
-<h2>创建角色</h2>
+<h2>Edit</h2>
 
 <h4>RoleViewModel</h4>
 <hr />
 <div class="row">
     <div class="col-md-4">
-        <form asp-action="Create">
+        <form asp-action="Edit">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
                 <label asp-for="Name" class="control-label"></label>
@@ -28,6 +28,7 @@
                     <ol id="tree">
                         @foreach (var controller in controllers)
                         {
+                            var selectedController = Model?.SelectedControllers?.SingleOrDefault(c => c.Id == controller.Id);
                             var name = controller.DisplayName ?? controller.Name;
 
                             <li class="controller" data-value="@controller.Name">
@@ -39,8 +40,9 @@
                                         @foreach (var action in controller.Actions)
                                         {
                                             name = action.DisplayName ?? action.Name;
-                                            <li data-value="@action.Name">@name</li>
-                                        }
+                                            <li data-value="@action.Name"
+                                                @if (selectedController != null && selectedController.Actions.Any(a => a.Id == action.Id)) { <text> data-checked='1' </text>  }>@name</li>
+                                            }
                                     </ol>
                                 }
                             </li>
@@ -49,13 +51,16 @@
                 </div>
             </div>
             <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-default" />
+                <input type="submit" value="Save" class="btn btn-default" />
             </div>
         </form>
     </div>
-</div><div>
+</div>
+
+<div>
     <a asp-action="Index">Back to List</a>
 </div>
+
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 
@@ -96,8 +101,6 @@
 
                 return true;
             });
-
         });
-
     </script>
 }

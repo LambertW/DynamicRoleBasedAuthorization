@@ -91,5 +91,81 @@ namespace DynamicRoleBasedAuthorization.OriginalWeb.Controllers
 
             return RedirectToAction(nameof(Index));
         }
+
+        public async Task<IActionResult> Edit(string id)
+        {
+            ViewData["Controllers"] = _mvcControllerDiscovery.GetControllers();
+
+            var role = await _roleManager.FindByIdAsync(id);
+            if (role == null)
+                return NotFound();
+
+            var claims = await _roleManager.GetClaimsAsync(role);
+
+            var viewModel = new RoleViewModel
+            {
+                Name = role.Name,
+                SelectedControllers = claims.Any(t => t.Type == "Access") ?
+                    JsonConvert.DeserializeObject<IEnumerable<MvcControllerInfo>>(claims.First(t => t.Type == "Access").Value)
+                    : new List<MvcControllerInfo>()
+            };
+
+            return View(viewModel);
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> Edit(string id, RoleViewModel viewModel)
+        {
+            ViewData["Controllers"] = _mvcControllerDiscovery.GetControllers();
+            if (!ModelState.IsValid)
+            {
+                return View(viewModel);
+            }
+
+            var role = await _roleManager.FindByIdAsync(id);
+            if(role == null)
+            {
+                ModelState.AddModelError("", "角色不存在");
+                return View();
+            }
+
+            role.Name = viewModel.Name;
+            await _roleManager.UpdateAsync(role);
+
+            if (viewModel.SelectedControllers != null && viewModel.SelectedControllers.Any())
+            {
+                foreach (var controller in viewModel.SelectedControllers)
+                {
+                    foreach (var action in controller.Actions)
+                    {
+                        action.ControllerId = controller.Id;
+                    }
+                }
+
+                var accessJson = JsonConvert.SerializeObject(viewModel.SelectedControllers);
+
+                var existClaims = await _roleManager.GetClaimsAsync(role);
+                if(existClaims.Any(c => c.Type == "Access"))
+                {
+                    await _roleManager.RemoveClaimAsync(role, existClaims.First(c => c.Type == "Access"));
+                }
+                var newClaim = new System.Security.Claims.Claim("Access", accessJson);
+                var claimResult = await _roleManager.AddClaimAsync(role, newClaim);
+                
+
+                if (!claimResult.Succeeded)
+                {
+                    foreach (var error in claimResult.Errors)
+                    {
+                        ModelState.AddModelError("", error.Description);
+                    }
+
+                    return View(viewModel);
+                }
+            }
+
+            return RedirectToAction(nameof(Index));
+        }
+
     }
 }
